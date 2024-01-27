@@ -21,6 +21,6 @@ router.get('/:id', getWorkout)
 router.delete('/:id', deleteWorkout)
 
 // Update a new Workout
-router.patch('/:id', updateWorkout)
+router.put('/:id', updateWorkout)
 
 module.exports = router

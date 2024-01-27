@@ -3,7 +3,7 @@ import Container from "./Container"
 
 const NavBar = () => {
     return (
-        <Container className="bg-zinc-900 sticky top-0">
+        <Container className="dark:bg-zinc-900 bg-zinc-100 sticky top-0 z-50">
             <nav className="flex justify-between items-center gap-4
                 *:flex *:items-center *:gap-2">
                 <ul className="font-bold">

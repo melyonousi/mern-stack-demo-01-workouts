@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //pages & components
 import Home from './pages/Home'
@@ -19,6 +21,7 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
+      <ToastContainer theme='colored' />
     </div>
   );
 }
