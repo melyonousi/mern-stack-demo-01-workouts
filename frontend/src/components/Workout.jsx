@@ -1,23 +1,23 @@
-import { useContext } from "react"
-import WorkoutContext from "../context/WorkoutContext"
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
 
 export const Workout = (props) => {
-
-    const { setWorkout, workout, dialog } = useContext(WorkoutContext)
-
+    const { workout, dispatch } = useWorkoutsContext()
 
     const handleViewUpdate = async (_workout) => {
-        setWorkout(_workout)
+        // setWorkout(_workout)
     }
 
-    const handleDelete = async (workout) => {
-        await setWorkout(workout)
-        dialog.current.showModal()
+    const handleDelete = async () => {
+        props.dialog.current.showModal()
+        dispatch({ type: 'GET_WORKOUT', payload: { workout: props.workout } })
     }
 
     return (
         <div className={`flex justify-between gap-2 border rounded py-1.5 px-2 cursor-pointer
-        hover:border-[#FFAA00] transition ${workout?._id === props.workout?._id ? 'border-teal-600' : ''}`} onClick={() => handleViewUpdate(props.workout)}>
+        hover:border-[#FFAA00] transition 
+        ${workout?._id === props.workout?._id ? 'border-teal-600' : ''}`}
+            onClick={() => handleViewUpdate(props.workout)}
+        >
             <div>
                 <h2 className="font-bold">{props.workout.title}</h2>
                 <p><strong>Load (kg): </strong> {props.workout.load}</p>
