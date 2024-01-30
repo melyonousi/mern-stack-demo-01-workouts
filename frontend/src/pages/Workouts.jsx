@@ -34,6 +34,7 @@ const Workouts = () => {
   }, [dispatch])
 
   const handleDelete = async () => {
+    setIsLoading(true)
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts/${workout._id}`, {
         method: 'DELETE'
@@ -49,6 +50,7 @@ const Workouts = () => {
       toast.error(error.message)
     }
     dialog.current.close()
+    setIsLoading(false)
   }
 
   return (
@@ -57,7 +59,7 @@ const Workouts = () => {
         <div className="col-span-3 py-10 flex flex-col gap-5">
           {
             isLoading ?
-              'loading..' :
+              <span className="is-loading"></span> :
               !workouts || workouts.length <= 0 ?
                 'no data' :
                 workouts.map((workout, index) => <Workout key={workout._id} workout={workout} dialog={dialog} />)
@@ -72,7 +74,7 @@ const Workouts = () => {
               Are you sure, you want to delete this '{workout?.title}'?
             </div>
             <div className="self-end space-x-4">
-              <button onClick={handleDelete}>Delete</button>
+              <button onClick={handleDelete}>Delete {isLoading ? <span className="is-loading"></span> : ''}</button>
               <button onClick={() => dialog.current.close()}>Cancel</button>
             </div>
           </div>

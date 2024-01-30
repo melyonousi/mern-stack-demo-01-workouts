@@ -83,7 +83,7 @@ export const AddWorkout = () => {
             </div>
             <div>
                 <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit mx-auto py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="submit">
-                    Add Workout {isLoading ? '...' : ''}
+                    Add Workout {isLoading ? <span className="is-loading"></span> : ''}
                 </button>
             </div>
         </form>

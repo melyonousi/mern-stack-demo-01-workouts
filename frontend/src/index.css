@@ -6,3 +6,9 @@
 html, body {
   color-scheme: light dark;
 }
+
+@layer components {
+  .is-loading {
+    @apply w-4 h-4 rounded-full border-x-2 border-teal-500 animate-spin inline-flex;
+  }
+}
