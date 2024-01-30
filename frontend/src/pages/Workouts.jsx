@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react"
 import Container from "../components/Container"
 import { Workout } from "../components/Workout"
 import { AddWorkout } from "../components/AddWorkout"
-import WorkoutContext from "../Context/WorkoutContext"
+import WorkoutContext from "../context/WorkoutContext"
 import { toast } from 'react-toastify';
 
 const Workouts = () => {
   const [workouts, setWorkouts] = useState(null)
   const [workout, setWorkout] = useState(false)
-  const [confirmDialog, setConfirmDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const dialog = useRef()
 

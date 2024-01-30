@@ -1,6 +1,6 @@
 import { useContext, useEffect, useReducer, useState } from "react"
 import { toast } from 'react-toastify'
-import WorkoutContext from "../Context/WorkoutContext"
+import WorkoutContext from "../context/WorkoutContext"
 
 export const AddWorkout = () => {
 
