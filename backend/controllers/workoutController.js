@@ -73,6 +73,7 @@ const deleteWorkout = async (req, res) => {
 // Update Workout
 const updateWorkout = async (req, res) => {
     const { title, load, reps } = req.body
+
     let emptyFields = {}
     if (!title) {
         emptyFields['title'] = 'requierd title'
@@ -86,6 +87,7 @@ const updateWorkout = async (req, res) => {
     if (Object.keys(emptyFields).length !== 0) {
         return res.status(400).json({ emptyFields, error: 'please fill in all required fields' })
     }
+    
     try {
         const { id } = req.params
         if (!mongoose.Types.ObjectId.isValid(id)) {

@@ -9,11 +9,7 @@ export const AddWorkout = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [isError, setIsError] = useState({})
 
-    const initialState = {
-        title: '',
-        load: '',
-        reps: '',
-    }
+    const initialState = { title: '', load: '', reps: '' }
     const reducer = (state, action) => {
         switch (action.type) {
             case 'input': return { ...state, [action.field]: action.value }
@@ -69,6 +65,7 @@ export const AddWorkout = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
         try {
             const res = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts/${workout._id}`, {
                 method: 'PUT',
@@ -78,7 +75,6 @@ export const AddWorkout = () => {
 
             const data = await res.json()
             if (res.ok) {
-                console.log(data)
                 dispatch({ type: 'UPDATE_WORKOUT', payload: { workout: data } })
                 toast.success(res.statusText)
                 setIsError({})
@@ -86,10 +82,10 @@ export const AddWorkout = () => {
                 setIsError(data?.emptyFields)
                 toast.error(`${data.error}`)
             }
-
         } catch (error) {
             toast.error(error.message)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -140,10 +136,33 @@ export const AddWorkout = () => {
             </div>
             <div className="flex justify-start gap-4">
                 <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="submit">
-                    {workout ? 'Update Workout' : 'Add Workout'} {isLoading ? <span className="is-loading"></span> : ''}
+                    {
+                        workout
+                            ?
+                            'Update Workout'
+                            :
+                            'Add Workout'
+                    }
+                    {
+                        isLoading
+                            ?
+                            <span className="is-loading"></span>
+                            :
+                            ''
+                    }
                 </button>
                 {
-                    workout ? <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="button" onClick={() => dispatch({ type: 'GET_WORKOUT', payload: { workout: null } })}>Cancel</button> : ''
+                    workout
+                        ?
+                        <button
+                            className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300"
+                            type="button"
+                            onClick={() => { dispatch({ type: 'GET_WORKOUT', payload: { workout: null } }); setIsError({}) }}
+                        >
+                            Cancel
+                        </button>
+                        :
+                        ''
                 }
             </div>
         </form>
