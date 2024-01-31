@@ -1,3 +1,4 @@
+import { formatDistanceToNow } from "date-fns"
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
 
 export const Workout = (props) => {
@@ -22,10 +23,10 @@ export const Workout = (props) => {
                 <h2 className="font-bold">{props.workout.title}</h2>
                 <p><strong>Load (kg): </strong> {props.workout.load}</p>
                 <p><strong>Reps: </strong>{props.workout.reps}</p>
-                <p>{props.workout.createdAt}</p>
+                <p>{formatDistanceToNow(new Date(props.workout.createdAt), {addSuffix: true})}</p>
             </div>
             <div className="flex flex-col gap-1">
-                <button className="border rounded px-1.5 hover:border-red-500 hover:text-red-500 transition" type="button" onClick={handleDelete}>X</button>
+                <button className="rounded px-1.5 hover:text-red-500 transition material-symbols-outlined" type="button" onClick={handleDelete}>delete</button>
             </div>
         </div>
     )
