@@ -1,10 +1,10 @@
-import { useReducer, useState } from "react"
+import { useEffect, useReducer, useState } from "react"
 import { toast } from 'react-toastify'
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
 
 export const AddWorkout = () => {
 
-    const { dispatch } = useWorkoutsContext()
+    const { workout, dispatch } = useWorkoutsContext()
 
     const [isLoading, setIsLoading] = useState(false)
     const [isError, setIsError] = useState({})
@@ -27,6 +27,10 @@ export const AddWorkout = () => {
         }
     }
     const [state, dispatchAdd] = useReducer(reducer, initialState)
+
+    useEffect(() => {
+        dispatchAdd({ type: 'update', value: workout ?? {} })
+    }, [workout])
 
     const handleChange = (e) => {
         dispatchAdd({
@@ -63,8 +67,33 @@ export const AddWorkout = () => {
         setIsLoading(false)
     }
 
+    const handleUpdate = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts/${workout._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(state)
+            })
+
+            const data = await res.json()
+            if (res.ok) {
+                console.log(data)
+                dispatch({ type: 'UPDATE_WORKOUT', payload: { workout: data } })
+                toast.success(res.statusText)
+                setIsError({})
+            } else {
+                setIsError(data?.emptyFields)
+                toast.error(`${data.error}`)
+            }
+
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     return (
-        <form onSubmit={handleSubmit} className="mx-auto max-w-md px-5 w-full flex flex-col gap-2 py-8">
+        <form onSubmit={workout ? handleUpdate : handleSubmit} className="mx-auto max-w-md px-5 w-full flex flex-col gap-2 py-8">
             <div>
                 <label htmlFor="title"></label>
                 <input
@@ -109,10 +138,13 @@ export const AddWorkout = () => {
                 />
                 {isError?.reps ? <span className="text-red-500">{isError?.reps}</span> : ''}
             </div>
-            <div>
-                <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit mx-auto py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="submit">
-                    Add Workout {isLoading ? <span className="is-loading"></span> : ''}
+            <div className="flex justify-start gap-4">
+                <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="submit">
+                    {workout ? 'Update Workout' : 'Add Workout'} {isLoading ? <span className="is-loading"></span> : ''}
                 </button>
+                {
+                    workout ? <button className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300" type="button" onClick={() => dispatch({ type: 'GET_WORKOUT', payload: { workout: null } })}>Cancel</button> : ''
+                }
             </div>
         </form>
     )

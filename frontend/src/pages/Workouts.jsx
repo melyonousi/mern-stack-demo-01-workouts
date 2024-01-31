@@ -33,6 +33,11 @@ const Workouts = () => {
     fetchWorkouts()
   }, [dispatch])
 
+  const handleReset = async () => {
+    dialog.current.close()
+    dispatch({ type: 'GET_WORKOUT', payload: { workout: null } })
+  }
+
   const handleDelete = async () => {
     setIsLoading(true)
     try {
@@ -75,7 +80,7 @@ const Workouts = () => {
             </div>
             <div className="self-end space-x-4">
               <button onClick={handleDelete}>Delete {isLoading ? <span className="is-loading"></span> : ''}</button>
-              <button onClick={() => dialog.current.close()}>Cancel</button>
+              <button onClick={handleReset}>Cancel</button>
             </div>
           </div>
         </dialog>

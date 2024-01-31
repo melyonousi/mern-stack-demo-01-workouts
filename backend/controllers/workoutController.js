@@ -72,13 +72,31 @@ const deleteWorkout = async (req, res) => {
 
 // Update Workout
 const updateWorkout = async (req, res) => {
+    const { title, load, reps } = req.body
+    let emptyFields = {}
+    if (!title) {
+        emptyFields['title'] = 'requierd title'
+    }
+    if (!load) {
+        emptyFields['load'] = 'requierd load'
+    }
+    if (!reps) {
+        emptyFields['reps'] = 'requierd reps'
+    }
+    if (Object.keys(emptyFields).length !== 0) {
+        return res.status(400).json({ emptyFields, error: 'please fill in all required fields' })
+    }
     try {
         const { id } = req.params
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(404).json({ error: 'Not Valide ID' })
         }
 
-        const _workout = await Workout.findOneAndUpdate({ _id: id }, { ...req.body })
+        const _workout = await Workout.findOneAndUpdate(
+            { _id: id },
+            { ...req.body },
+            { new: true, runValidators: true } // Add { new: true } to return the updated document
+        )
 
         if (!_workout) {
             return res.status(404).json({ error: 'Not Found' })
