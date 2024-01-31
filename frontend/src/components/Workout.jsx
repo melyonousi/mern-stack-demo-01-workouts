@@ -10,7 +10,7 @@ export const Workout = (props) => {
     }
 
     return (
-        <div className={`flex justify-between gap-2 border rounded py-1.5 px-2 cursor-pointer
+        <div className={`group flex justify-between gap-2 border rounded py-1.5 px-2 cursor-pointer
         hover:border-[#FFAA00] transition 
         ${workout?._id === props.workout?._id ? 'border-teal-600' : ''}`}
             onClick={() => dispatch({ type: 'GET_WORKOUT', payload: { workout: props.workout } })}
@@ -22,8 +22,13 @@ export const Workout = (props) => {
                 <p>{formatDistanceToNow(new Date(props.workout.createdAt), { addSuffix: true })}</p>
             </div>
             <div className="flex flex-col justify-between gap-1">
-                <button className="rounded px-1.5 hover:text-red-500 transition material-symbols-outlined" type="button" onClick={handleDelete}>delete</button>
-                {workout?._id === props.workout?._id ? <span className="rounded px-1.5 text-teal-500 transition material-symbols-outlined">edit</span> : ''}
+                <button
+                    className="group-hover:block hidden rounded px-1.5 hover:text-red-500 material-symbols-outlined"
+                    type="button"
+                    onClick={handleDelete}>
+                    delete
+                </button>
+                {workout?._id === props.workout?._id ? <span className={` rounded px-1.5 text-teal-500 transition material-symbols-outlined`}>edit</span> : ''}
             </div>
         </div>
     )
