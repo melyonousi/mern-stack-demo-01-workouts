@@ -3,3 +3,4 @@ npm i express
 npx tsc --init
 npm i -D nodemon
 npm i mongoose
+npm install bcrypt

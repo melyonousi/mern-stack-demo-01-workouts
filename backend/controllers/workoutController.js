@@ -87,7 +87,7 @@ const updateWorkout = async (req, res) => {
     if (Object.keys(emptyFields).length !== 0) {
         return res.status(400).json({ emptyFields, error: 'please fill in all required fields' })
     }
-    
+
     try {
         const { id } = req.params
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -97,7 +97,7 @@ const updateWorkout = async (req, res) => {
         const _workout = await Workout.findOneAndUpdate(
             { _id: id },
             { ...req.body },
-            { new: true, runValidators: true } // Add { new: true } to return the updated document
+            { new: true } // Add { new: true } to return the updated document
         )
 
         if (!_workout) {
