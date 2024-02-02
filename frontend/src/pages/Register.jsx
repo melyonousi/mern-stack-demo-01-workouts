@@ -11,7 +11,6 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    avatar: ''
   })
   const [isError, setIsError] = useState({})
 
@@ -26,7 +25,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/register`, {
         method: 'POST',
@@ -42,7 +40,6 @@ const Register = () => {
           email: '',
           password: '',
           confirmPassword: '',
-          avatar: ''
         })
         setIsError({})
         setIsError({ success: 'register with success' })
@@ -102,6 +99,8 @@ const Register = () => {
           />
           {isError?.email ? <span className="text-red-500">{isError?.email}</span> : ''}
         </div>
+
+        <input type="hidden" autoComplete="username email" value={'help input'} onChange={handleChange} />
 
         <div>
           <label htmlFor="password"></label>

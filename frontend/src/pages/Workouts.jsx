@@ -4,11 +4,15 @@ import { Workout } from "../components/Workout"
 import { AddWorkout } from "../components/AddWorkout"
 import { toast } from 'react-toastify';
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
+import { useAuthContext } from '../hooks/useAuthContext'
 
 const Workouts = () => {
   const { workouts, workout, dispatch } = useWorkoutsContext()
+  const { user } = useAuthContext()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
+
   const dialog = useRef()
 
   useEffect(() => {
@@ -18,20 +22,29 @@ const Workouts = () => {
         const res = await fetch(process.env.REACT_APP_API_URL + '/api/workouts',
           {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Authorization': `Bearer ${user.token}`
+            },
           }
         )
         const data = await res.json()
         if (res.ok) {
           dispatch({ type: 'SET_WORKOUTS', payload: { workouts: data } })
+        } else {
+          setError(data.error)
         }
       } catch (err) {
         toast.error(err.message)
       }
       setIsLoading(false)
     }
-    fetchWorkouts()
-  }, [dispatch])
+    if (user) {
+      setError(null)
+      fetchWorkouts()
+    } else {
+      setError('Unauthorized')
+    }
+  }, [dispatch, user])
 
   const handleReset = async () => {
     dialog.current.close()
@@ -42,7 +55,10 @@ const Workouts = () => {
     setIsLoading(true)
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts/${workout._id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
       })
       const json = await res.json()
       if (res.ok) {
@@ -66,7 +82,7 @@ const Workouts = () => {
             isLoading ?
               <span className="is-loading"></span> :
               !workouts || workouts.length <= 0 ?
-                'no data' :
+                (error ? <span className="text-red-500">{error}</span> : 'no data') :
                 workouts.map((workout, index) => <Workout key={workout._id} workout={workout} dialog={dialog} />)
           }
         </div>

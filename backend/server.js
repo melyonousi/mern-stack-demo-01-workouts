@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const workoutRouter = require('./routes/workouts')
 const userRoutes = require('./routes/users')
 const cors = require('cors')
+const path = require('path')
+
 //dotEnv
 dotenv.config()
 
@@ -23,6 +25,9 @@ app.use((req, res, next) => {
     })
     next()
 })
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // routes
 app.use('/api/workouts', workoutRouter)

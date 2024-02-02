@@ -1,10 +1,12 @@
 import { useEffect, useReducer, useState } from "react"
 import { toast } from 'react-toastify'
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
+import { useAuthContext } from "../hooks/useAuthContext"
 
 export const AddWorkout = () => {
 
-    const { workout, dispatch } = useWorkoutsContext()
+    const { workout, dispatch: workoutsDispatch } = useWorkoutsContext()
+    const { user } = useAuthContext()
 
     const [isLoading, setIsLoading] = useState(false)
     const [isError, setIsError] = useState({})
@@ -22,14 +24,15 @@ export const AddWorkout = () => {
             default: return state
         }
     }
-    const [state, dispatchAdd] = useReducer(reducer, initialState)
+    
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     useEffect(() => {
-        dispatchAdd({ type: 'update', value: workout ?? {} })
+        dispatch({ type: 'update', value: workout ?? {} })
     }, [workout])
 
     const handleChange = (e) => {
-        dispatchAdd({
+        dispatch({
             type: 'input',
             field: e.target.name,
             value: e.target.value,
@@ -39,19 +42,25 @@ export const AddWorkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
+
+        if (!user) {
+            setIsError('Unauthorized')
+        }
+
         try {
             const res = await fetch(process.env.REACT_APP_API_URL + '/api/workouts', {
                 method: 'POST',
                 body: JSON.stringify(state),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
                 },
             })
             const data = await res.json()
             if (res.ok) {
-                dispatch({ type: 'CREATE_WORKOUT', payload: { workouts: data } })
+                workoutsDispatch({ type: 'CREATE_WORKOUT', payload: { workouts: data } })
                 toast.success(`'${data.title}' added with success`)
-                dispatchAdd({ type: 'reset' })
+                dispatch({ type: 'reset' })
                 setIsError({})
             } else {
                 setIsError(data?.emptyFields)
@@ -69,13 +78,16 @@ export const AddWorkout = () => {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts/${workout._id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
                 body: JSON.stringify(state)
             })
 
             const data = await res.json()
             if (res.ok) {
-                dispatch({ type: 'UPDATE_WORKOUT', payload: { workout: data } })
+                workoutsDispatch({ type: 'UPDATE_WORKOUT', payload: { workout: data } })
                 toast.success(res.statusText)
                 setIsError({})
             } else {
@@ -157,7 +169,7 @@ export const AddWorkout = () => {
                         <button
                             className="cursor-pointer dark:bg-zinc-800 bg-white rounded w-fit py-1.5 px-2 dark:hover:bg-zinc-700 hover:bg-zinc-300"
                             type="button"
-                            onClick={() => { dispatch({ type: 'GET_WORKOUT', payload: { workout: null } }); setIsError({}) }}
+                            onClick={() => { workoutsDispatch({ type: 'GET_WORKOUT', payload: { workout: null } }); setIsError({}) }}
                         >
                             Cancel
                         </button>

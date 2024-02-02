@@ -4,7 +4,8 @@ const mongoose = require('mongoose')
 // Get Workouts
 const getWorkouts = async (req, res) => {
     try {
-        const response = await Workout.find().sort({ createdAt: -1 }) // -1 discending
+        const user_id = req.user._id
+        const response = await Workout.find({user_id}).sort({ createdAt: -1 }) // -1 discending
         res.status(200).json(response)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -46,7 +47,9 @@ const creatWorkout = async (req, res) => {
     }
 
     try {
-        const response = await Workout.create({ title, reps, load })
+        // from middlware => req.user
+        const user_id = req.user._id
+        const response = await Workout.create({ title, reps, load, user_id })
         res.status(200).json(response)
     } catch (error) {
         res.status(400).json({ error: error.message })
